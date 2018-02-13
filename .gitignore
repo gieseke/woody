@@ -60,3 +60,14 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+.venv
+data/*/*.h5
+data/*/*.h5pd
+data/*/*.csv
+data/*/*.html
+data/*/*_files*
+data/landsat
+
+.project
+.pydevproject

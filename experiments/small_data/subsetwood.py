@@ -1,0 +1,112 @@
+import sys
+sys.path.append(".")
+
+import os
+import json
+from util import evaluate
+import params
+
+import time
+
+from woody import SubsetWoodClassifier
+
+from woody.io import  MemoryStore, DiskStore
+from woody.util import ensure_dir_for_file
+from woody.data import *
+
+def single_run(dkey, train_size, param, seed, profile=False):
+                
+    print("Processing data set %s with train_size %s, seed %s, and parameters %s ..." % (str(dkey), str(train_size), str(seed), str(param)))
+    
+    if dkey == "covtype":
+        traingen, testgen = covtype_generators(train_size=train_size, store="mem", seed=seed)
+        n_subset = 50000
+    elif dkey == "higgs":
+        traingen, testgen = higgs_generators(train_size=train_size, store="mem", seed=seed)
+        n_subset = 500000
+    elif dkey == "susy":
+        traingen, testgen = susy_generators(train_size=train_size, store="mem", seed=seed)
+        n_subset = 500000
+    else:
+        raise Exception("Unknown data set!")
+    
+    print("")
+    print("Number of training patterns:\t%i" % traingen.get_shapes()[0][0])
+    print("Number of test patterns:\t%i" % testgen.get_shapes()[0][0])
+    print("Dimensionality of the data:\t%i\n" % traingen.get_shapes()[0][1])
+
+    model = SubsetWoodClassifier(
+                n_estimators=param['n_estimators'],
+                criterion="gini",
+                max_features=param['max_features'],
+                min_samples_split=2,
+                n_jobs=param['n_jobs'],
+                seed=seed,
+                bootstrap=param['bootstrap'],
+                tree_traversal_mode="dfs",
+                tree_type=param['tree_type'],
+                min_samples_leaf=1,
+                float_type="double",
+                max_depth=None,
+                verbose=1,
+                store=MemoryStore())
+         
+    # training
+    if profile == True:
+        import yep
+        assert param['n_jobs'] == 1
+        yep.start("train.prof")
+                
+    fit_start_time = time.time()        
+    model.fit(traingen, n_subset=n_subset)
+    fit_end_time = time.time()
+    if profile == True:
+        yep.stop()
+    ypreds_train = model.predict(generator=traingen)
+    
+    # testing
+    test_start_time = time.time()
+    ypred_test = model.predict(generator=testgen)
+    test_end_time = time.time()
+    
+    results = {}
+    results['dataset'] = dkey
+    results['param'] = param
+    results['training_time'] = fit_end_time - fit_start_time
+    results['testing_time'] = test_end_time - test_start_time
+    print("Training time:\t\t%f" % results['training_time'])
+    print("Testing time:\t\t%f" % results['testing_time'])
+                
+    evaluate(ypreds_train, traingen.get_all_target(), results, "training")
+    evaluate(ypred_test, testgen.get_all_target(), results, "testing")
+        
+    fname = '%s_%s_%s_%s_%s_%s.json' % (str(param['n_estimators']),
+                                  str(param['max_features']),
+                                  str(param['n_jobs']),
+                                  str(param['bootstrap']),
+                                  str(param['tree_type']),
+                                  str(seed),
+                                )
+    fname = os.path.join(params.odir, str(dkey), str(train_size), "subsetwood", fname)
+    ensure_dir_for_file(fname)
+    with open(fname, 'w') as fp:
+        json.dump(results, fp)
+    
+    del(testgen)
+    del(traingen)
+    model.cleanup()
+    
+    time.sleep(1)
+
+###################################################################################
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--dkey', nargs='?', const="covtype", type=str, default="covtype")
+parser.add_argument('--train_size', nargs='?', const=0, type=int, default=0)
+parser.add_argument('--seed', nargs='?', const=0, type=int, default=0)
+parser.add_argument('--key', type=str)
+args = parser.parse_args()
+dkey, train_size, seed, key = args.dkey, args.train_size, args.seed, args.key
+###################################################################################
+
+single_run(dkey, train_size, params.parameters[key], seed)

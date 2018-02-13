@@ -1,0 +1,22 @@
+h2o==3.10.4.8
+h5py==2.6.0
+matplotlib==1.5.3
+networkx==1.11
+nose==1.3.7
+numpy==1.11.2
+pandas==0.19.1
+pygraphviz==1.3.1
+pyparsing==2.1.10
+requests==2.18.4
+scikit-image==0.12.3
+scikit-learn==0.18.1
+scipy==0.18.1
+seaborn==0.8.1
+sklearn-evaluation==0.3
+tables==3.3.0
+tabulate==0.7.7
+urllib3==1.22
+yep==0.4
+Cython==0.26.1
+#skutil==0.1.6 # install manually from https://github.com/tgsmith61591/skutil
+

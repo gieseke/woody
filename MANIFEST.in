@@ -1,0 +1,15 @@
+include *.rst
+include CONTRIBUTING.md
+include LICENSE
+include requirements.txt
+
+recursive-include examples *.py
+recursive-include woody *.c *.h *.i
+
+#include docs/conf.py
+#include docs/Makefile
+#recursive-include docs *.rst
+#include docs/_static/bibtex/*
+#include docs/_static/images/*
+
+exclude MANIFEST.in
