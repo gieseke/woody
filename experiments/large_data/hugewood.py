@@ -19,12 +19,16 @@ def single_run(dkey, train_size, param, seed, profile=False):
                 
     print("Processing data set %s with train_size %s and parameters %s ..." % (str(dkey), str(train_size), str(param)))
     
-    odir = "/backup/fgieseke/tmp/hugewood"
+    tmp_dir = "tmp/hugewood"
     
     if dkey == "landsat":
 
-        fname_train = "/backup/fgieseke/data/landsat/landsat_train.h5pd"
-        fname_test = "/backup/fgieseke/data/landsat_kdd/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
+        # TODO: Download file manually if needed (255GB and 524MB):
+        # wget https://sid.erda.dk/share_redirect/GsVMKksFSk/landsat_train.h5pd
+        # wget https://sid.erda.dk/share_redirect/GsVMKksFSk/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd
+
+        fname_train = "data/landsat_train.h5pd"
+        fname_test = "data/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
         
         traingen = DataGenerator(fname=fname_train, seed=seed, patterns=True, target=True, chunksize=1000000, n_lines_max=train_size)
         testgen = DataGenerator(fname=fname_test, seed=seed, patterns=True, target=True, chunksize=1000000, n_lines_max=10000000)
@@ -69,7 +73,7 @@ def single_run(dkey, train_size, param, seed, profile=False):
                plot_intermediate={},
                chunk_max_megabytes=2048, 
                wrapped_instance=wood,
-               odir=odir,
+               odir=tmp_dir,
                store=DiskStore(),                       
                )
     

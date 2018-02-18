@@ -36,12 +36,17 @@ def single_run(dkey, train_size, param, seed, profile=False):
                 
     print("Processing data set %s with train_size %s and parameters %s ..." % (str(dkey), str(train_size), str(param)))
     
-    odir = "/backup/fgieseke/tmp/subsetwood"
+    tmp_dir = "tmp/subsetwood"
     
     if dkey == "landsat":
 
-        fname_train = "/backup/fgieseke/data/landsat_kdd/landsat_train_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
-        fname_test = "/backup/fgieseke/data/landsat_kdd/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
+        # TODO: Download file manually if needed (9,7GB and 524MB):
+        # wget https://sid.erda.dk/share_redirect/GsVMKksFSk/landsat_train_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd
+        # wget https://sid.erda.dk/share_redirect/GsVMKksFSk/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd
+
+        # TODO: Adapt paths accordingly
+        fname_train = "data/landsat_train_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
+        fname_test = "data/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
         
         traingen = DataGenerator(fname=fname_train, seed=seed, patterns=True, target=True, chunksize=1000000, n_lines_max=train_size)
         testgen = DataGenerator(fname=fname_test, seed=seed, patterns=True, target=True, chunksize=1000000, n_lines_max=20000000)
@@ -71,7 +76,7 @@ def single_run(dkey, train_size, param, seed, profile=False):
                 float_type="double",
                 max_depth=None,
                 verbose=1,
-                odir=odir,
+                odir=tmp_dir,
                 store=DiskStore())
 
     # training
@@ -122,19 +127,18 @@ def single_run(dkey, train_size, param, seed, profile=False):
     print("Predict distribution")
     print(numpy.bincount(ypred_test))
     
-    fname = '%s_%s_%s_%s_%s.json' % (str(param['n_estimators']),
+    fname = '%s_%s_%s_%s_%s_%s.json' % (str(param['n_estimators']),
                                   str(param['max_features']),
                                   str(param['n_jobs']),
                                   str(param['bootstrap']),
                                   str(param['tree_type']),
+                                  str(seed),
                                 )
     fname = os.path.join(params.odir, str(dkey), str(train_size), "subsetwood_" + str(n_subset), fname)
     ensure_dir_for_file(fname)
     with open(fname, 'w') as fp:
         json.dump(results, fp)
 
-    print("Labels test: %s" % str(set(ytest)))
-    plot_confusion(ytest.astype(numpy.int64), ypred_test.astype(numpy.int64), ofname=os.path.join(params.odir, "subsetwood_confusion_%s.png" % str(train_size)))
     
     del(testgen)
     del(traingen)
