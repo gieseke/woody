@@ -1,12 +1,11 @@
 import collections
 
-seed = 0
 odir = "results"
-#methods = ["hugewood", "subsetwood", "sk", "h2"]
-methods = ["hugewood"]
+
+methods = ["hugewood", "subsetwood", "sk", "h2"]
 
 datasets = collections.OrderedDict()
-datasets['landsat'] = {'train_sizes':[i*1000000 for i in [10,20,30,40]]}
+datasets['landsat'] = {'train_sizes':[i*1000000 for i in [10,20,30,40,50]]}
 
 parameters = collections.OrderedDict()
 #parameters['ert'] = {'n_estimators':4,

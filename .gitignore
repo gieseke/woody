@@ -72,3 +72,12 @@ data/landsat
 .project
 .pydevproject
 
+# swig related
+*_double.py
+*_float.py
+*_wrap.c
+
+experiments/landsat/data
+experiments/landsat/tmp
+experiments/large_data/data
+experiments/large_data/tmp

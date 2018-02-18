@@ -21,14 +21,20 @@ def single_run(dkey, train_size, param, seed, profile=False):
     
     if dkey == "landsat":
 
-        fname_train = "/backup/fgieseke/data/landsat_kdd/landsat_train_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
-        fname_test = "/backup/fgieseke/data/landsat_kdd/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
+        # TODO: Download file manually if needed (9,7GB and 524MB):
+        # wget https://sid.erda.dk/share_redirect/GsVMKksFSk/landsat_train_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd
+        # wget https://sid.erda.dk/share_redirect/GsVMKksFSk/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd
+
+        # TODO: Adapt paths accordingly
+        fname_train = "data/landsat_train_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
+        fname_test = "data/landsat_test_LC08_L1TP_196022_20150415_20170409_01_T1_test_random_row_0.050000.h5pd"
         
         traingen = DataGenerator(fname=fname_train, seed=seed, patterns=True, target=True, chunksize=1000000, n_lines_max=train_size)
         testgen = DataGenerator(fname=fname_test, seed=seed, patterns=True, target=True, chunksize=1000000, n_lines_max=20000000)
                 
-        fname_train_csv = "/backup/fgieseke/data/landsat/landsat_train_small_%lu.csv" % train_size
-        fname_test_csv = "/backup/fgieseke/data/landsat/landsat_test.csv"
+        # TODO: Adapt paths accordingly
+        fname_train_csv = "tmp/landsat_train_small_%lu.csv" % train_size
+        fname_test_csv = "tmp/landsat_test.csv"
         
     traingen.to_csv(fname_train_csv, cache=False, remove=True)
     testgen.to_csv(fname_test_csv, cache=False, remove=True)
@@ -70,7 +76,7 @@ def single_run(dkey, train_size, param, seed, profile=False):
                 max_depth=20,
                 balance_classes=False,
                 ntrees=param['n_estimators'],
-                seed=params.seed)
+                seed=seed)
     
     # training
     fit_start_time = time.time()

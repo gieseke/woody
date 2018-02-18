@@ -17,4 +17,4 @@ try:
 except Exception as e:
     warnings.warn("Swig models not compiled yet? Error message: %s" % str(e))
 
-__version__ = "0.2.dev0"
+__version__ = "0.3"
