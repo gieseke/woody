@@ -15,7 +15,7 @@ Quickstart
 
 To install the package from the sources, first get the current development release via::
 
-  git clone git@gitlab.com:fgieseke/woody.git
+  git clone https://github.com/gieseke/woody.git
 
 Afterwards, install a virtual environment via virtualenv. Go to the root of the woody package and type::
 
