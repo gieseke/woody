@@ -15,7 +15,7 @@ seaborn==0.8.1
 sklearn-evaluation==0.3
 tables==3.3.0
 tabulate==0.7.7
-urllib3==1.22
+urllib3==1.24.2
 yep==0.4
 Cython==0.26.1
 #skutil==0.1.6 # install manually from https://github.com/tgsmith61591/skutil
